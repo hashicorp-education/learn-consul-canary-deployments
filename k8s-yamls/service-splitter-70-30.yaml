@@ -1,0 +1,10 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceSplitter
+metadata:
+  name: helloworld
+spec:
+  splits:
+    - weight: 70
+      serviceSubset: v1
+    - weight: 30
+      serviceSubset: v2
