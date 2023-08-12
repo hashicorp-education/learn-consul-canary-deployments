@@ -1,7 +1,7 @@
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceResolver
 metadata:
-  name: helloworld
+  name: frontend
 spec:
   defaultSubset: v1
   subsets:
