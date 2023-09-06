@@ -4,7 +4,7 @@ metadata:
   name: frontend
 spec:
   splits:
-    - weight: 70
+    - weight: 50
       serviceSubset: v1
-    - weight: 30
+    - weight: 50
       serviceSubset: v2

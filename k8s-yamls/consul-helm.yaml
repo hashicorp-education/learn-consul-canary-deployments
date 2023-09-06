@@ -1,14 +1,15 @@
 global:
   enabled: true
   name: consul
-  image: hashicorp/consul:1.16.0
   datacenter: dc1
+  image: "hashicorp/consul:1.16.0"
+  acls:
+    manageSystemACLs: true
   tls:
     enabled: true
     enableAutoEncrypt: true
     verify: true
-  acls:
-    manageSystemACLs: true
+
 server:
   enabled: true
   replicas: 3
@@ -16,9 +17,17 @@ server:
     {
       "log_level": "TRACE"
     }
+
+connectInject:
+  transparentProxy:
+    defaultEnabled: true
+  enabled: true
+  default: true
+  apiGateway:
+    managedGatewayClass:
+      serviceType: LoadBalancer
+
 ui:
   enabled: true
   service:
     type: LoadBalancer
-connectInject:
-  enabled: true
