@@ -26,7 +26,7 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 ```
 
 ```
-consul-k8s install -config-file=k8s-yamls/consul-helm.yaml
+consul-k8s install -config-file=consul/values.yaml
 ```
 
 ```
@@ -107,15 +107,15 @@ $ curl --insecure $CONSUL_HTTP_ADDR/v1/catalog/service/frontend?pretty
 ```
 
 ```
-kubectl port-forward deployments/nginx 8000:80
+kubectl apply -f k8s-yamls/frontend-resolver.yaml
 ```
 
 ```
-kubectl apply -f k8s-yamls/service-resolver.yaml
+kubectl apply -f k8s-yamls/frontend-splitter-v1-only.yaml
 ```
 
 ```
-kubectl apply -f k8s-yamls/service-splitter-v1-only.yaml
+for i in `seq 1 10`; do echo -n "$i. " && curl -s $APIGW_URL | sed -n 's/.*\(HashiCups-v1\).*/\1/p;s/.*\(HashiCups-v2\).*/\1/p' && echo ""; done
 ```
 
 ```
@@ -123,12 +123,13 @@ kubectl apply -f k8s-yamls/service-splitter-50-50.yaml
 ```
 
 ```
+for i in `seq 1 10`; do echo -n "$i. " && curl -s $APIGW_URL | sed -n 's/.*\(HashiCups-v1\).*/\1/p;s/.*\(HashiCups-v2\).*/\1/p' && echo ""; done
+```
+
+```
 kubectl apply -f k8s-yamls/service-splitter-v2-only.yaml
 ```
 
-kubectl delete -f hashicups/frontend-v1.yaml
-kubectl delete -f k8s-yamls/service-splitter-v2-only.yaml
-kubectl delete -f k8s-yamls/service-resolver.yaml
-
-
-for i in `seq 1 10`; do echo -n "$i. " && curl -s http://localhost:8000/ | sed -n 's/.*\(HashiCups-v1\).*/\1/p;s/.*\(HashiCups-v2\).*/\1/p' && echo ""; done
+```
+for i in `seq 1 10`; do echo -n "$i. " && curl -s $APIGW_URL | sed -n 's/.*\(HashiCups-v1\).*/\1/p;s/.*\(HashiCups-v2\).*/\1/p' && echo ""; done
+```
