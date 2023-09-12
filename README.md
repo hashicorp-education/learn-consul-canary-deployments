@@ -111,10 +111,6 @@ kubectl apply -f k8s-yamls/frontend-resolver.yaml
 ```
 
 ```
-kubectl apply -f k8s-yamls/frontend-splitter-v1-only.yaml
-```
-
-```
 for i in `seq 1 10`; do echo -n "$i. " && curl -s $APIGW_URL | sed -n 's/.*\(HashiCups-v1\).*/\1/p;s/.*\(HashiCups-v2\).*/\1/p' && echo ""; done
 ```
 
