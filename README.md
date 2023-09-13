@@ -7,4 +7,4 @@ This is a companion repo to the [Deploy seamless canary deployments with service
 - Deploy example applications
 - Create service subsets with service resolvers
 - Send partial traffic to new service
-- Send all traffic to new servic
+- Send all traffic to new service
