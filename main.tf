@@ -1,10 +1,24 @@
-# Learn Consul - API Gateway
+# Kubernetes provider
+# https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster#optional-configure-terraform-kubernetes-provider
+# To learn how to schedule deployments and services using the provider, go here: https://learn.hashicorp.com/terraform/kubernetes/deploy-nginx-kubernetes
+# The Kubernetes provider is included in this file so the EKS module can complete successfully. Otherwise, it throws an error when creating `kubernetes_config_map.aws_auth`.
+# You should **not** schedule deployments and services in this workspace. This keeps workspaces modular (one for provision EKS, another for scheduling Kubernetes resources) as per best practices.
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+}
 
-This is a companion repo to the [Deploy seamless canary deployments with service splitters](https://developer.hashicorp.com/consul/tutorials/developer-mesh/service-splitters-canary-deployment), containing sample configuration to:
+provider "aws" {
+  region = var.region
+}
 
-- Deploy an Elastic Kubernetes Service (EKS) cluster with Terraform
-- Deploy Consul to EKS cluster
-- Deploy example applications
-- Create service subsets with service resolvers
-- Send partial traffic to new service
-- Send all traffic to new servic
+data "aws_availability_zones" "available" {}
+
+locals {
+  cluster_name = "learn-canary-${random_string.suffix.result}"
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
