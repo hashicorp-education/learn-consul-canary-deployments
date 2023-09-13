@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: frontend
+      app: frontend
+  template:
+    metadata:
+      labels:
+        service: frontend
+        app: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9102"
+        consul.hashicorp.com/connect-inject: "true"
+        consul.hashicorp.com/service-meta-version: "2"
+        consul.hashicorp.com/service-tags: "v2"
+    spec:
+      serviceAccountName: frontend
+      containers:
+        - name: frontend
+          image: hashicorpdemoapp/frontend-nginx:v1.0.9
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_PUBLIC_API_URL
+              value: "/"
+            - name: NEXT_PUBLIC_FOOTER_FLAG
+              value: "HashiCups-v2"
+          volumeMounts:
+            - name: frontend-nginx-config
+              mountPath: /etc/nginx/conf.d/
+      volumes:
+        - name: frontend-nginx-config
+          configMap:
+            name: frontend-nginx-config
+            items:
+              - key: nginx.conf
+                path: default.conf
